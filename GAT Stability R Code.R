@@ -199,6 +199,17 @@ mlm.fit.Fun <- function(x) {
   return(modc)
 }
 
+relchange <- function(df, t1, t2, sd, rel) {
+  dat <- df %>% dplyr::select(t1, t2) %>% tidyr::drop_na()
+  dat <- dat %>% dplyr::mutate(diff = dat[,2] - dat[,1]) # compute difference score for each individual
+  #dat$diff <- getElement(object = dat, name = t2) - getElement(object = dat, name = t1)
+  se <- sd*sqrt(1 - rel) # compute standard error of measurement
+  sdiff <- sqrt(2*(se*se)) # compute Sdiff
+  dat <- dat %>% dplyr::mutate(RC = diff/sdiff) # compute reliable change
+  dat <- dat %>% dplyr::mutate(RCI = ifelse(dat$RC > 1.96, "RCPOS", ifelse(dat$RC < -1.96, "RCNEG", "RCSTAB")))
+  tibble::rownames_to_column(questionr::freq(dat$RCI, digits = 4, cum = TRUE, sort = "dec", total = TRUE, na.last = TRUE)) 
+}
+
 ### Recode Variables -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Recoding schemes
@@ -968,6 +979,834 @@ lavaan::summary(fit1.slp)
 # compare nested models
 lavaan::lavTestLRT(fit1.int, fit1.slp)
 
+### Dependent T-Test ----------------------------
+
+#d <- t.test(data$adapt.1.scale, data$adapt.2.scale, paired = TRUE)
+
+## Time 1 vs Time 2
+dt1 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "adapt.1.scale", i2 = "adapt.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt1[,7], n = dt1[,5]+1)
+
+dt2 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "acope.1.scale", i2 = "acope.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt2[,7], n = dt2[,5]+1)
+
+dt3 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "pcope.1.scale", i2 = "pcope.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt3[,7], n = dt3[,5]+1)
+
+dt4 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "chr.1.scale", i2 = "chr.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt4[,7], n = dt4[,5]+1)
+
+dt5 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "catastro.1.scale", i2 = "catastro.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt5[,7], n = dt5[,5]+1)
+
+dt6 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "depress.1.scale", i2 = "depress.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt6[,7], n = dt6[,5]+1)
+
+dt7 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "optimism.1.scale", i2 = "optimism.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt7[,7], n = dt7[,5]+1)
+
+dt8 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "posaffect.1.scale", i2 = "posaffect.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt8[,7], n = dt8[,5]+1)
+
+dt9 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "negaffect.1.scale", i2 = "negaffect.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt9[,7], n = dt9[,5]+1)
+
+dt10 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "lone.1.scale", i2 = "lone.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt10[,7], n = dt10[,5]+1)
+
+dt11 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "orgtrust.1.scale", i2 = "orgtrust.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt11[,7], n = dt11[,5]+1)
+
+dt12 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "wkengage.1.scale", i2 = "wkengage.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt12[,7], n = dt12[,5]+1)
+
+dt13 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "lifemean.1.scale", i2 = "lifemean.2.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt13[,7], n = dt13[,5]+1)
+
+
+## Time 1 vs Time 5
+dt1 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "adapt.1.scale", i2 = "adapt.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt1[,7], n = dt1[,5]+1)
+
+dt2 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "acope.1.scale", i2 = "acope.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt2[,7], n = dt2[,5]+1)
+
+dt3 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "pcope.1.scale", i2 = "pcope.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt3[,7], n = dt3[,5]+1)
+
+dt4 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "chr.1.scale", i2 = "chr.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt4[,7], n = dt4[,5]+1)
+
+dt5 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "catastro.1.scale", i2 = "catastro.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt5[,7], n = dt5[,5]+1)
+
+dt6 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "depress.1.scale", i2 = "depress.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt6[,7], n = dt6[,5]+1)
+
+dt7 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "optimism.1.scale", i2 = "optimism.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt7[,7], n = dt7[,5]+1)
+
+dt8 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "posaffect.1.scale", i2 = "posaffect.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt8[,7], n = dt8[,5]+1)
+
+dt9 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "negaffect.1.scale", i2 = "negaffect.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt9[,7], n = dt9[,5]+1)
+
+dt10 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "lone.1.scale", i2 = "lone.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt10[,7], n = dt10[,5]+1)
+
+dt11 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "orgtrust.1.scale", i2 = "orgtrust.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt11[,7], n = dt11[,5]+1)
+
+dt12 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "wkengage.1.scale", i2 = "wkengage.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt12[,7], n = dt12[,5]+1)
+
+dt13 <- as.data.frame(jmv::ttestPS(data = data, pairs = list(list(i1 = "lifemean.1.scale", i2 = "lifemean.5.scale")), effectSize = TRUE, desc = TRUE)$ttest)
+psych::cohen.d.ci(d = dt13[,7], n = dt13[,5]+1)
+
+
+### Reliable Change Index -------------------------------------
+dat2 <- data %>% dplyr::select(adapt.1.scale, adapt.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat2$adapt.1.scale, post.x = dat2$adapt.2.scale, coef.alpha = .72, which.crit = "b")
+se <- .74*sqrt(1-.72) # SEm  = 0.39
+sdiff <- sqrt(2*(se*se)) # Sdiff = 0.553765
+rci <- sdiff*1.96 # 1.08
+
+dat2 <- data %>% dplyr::select(adapt.1.scale, adapt.2.scale) %>% tidyr::drop_na()
+dat2 <- dat2 %>% dplyr::mutate(diff = adapt.2.scale - adapt.1.scale)
+se <- .74*sqrt(1-.72) # SEm  = 0.39
+sdiff <- sqrt(2*(se*se)) # Sdiff = 0.553765
+dat2 <- dat2 %>% dplyr::mutate(RC = diff/sdiff)
+dat2 <- dat2 %>% dplyr::mutate(RCI = ifelse(dat2$RC > 1.96, "RCPOS", ifelse(dat2$RC < -1.96, "RCNEG", "RCSTAB")))
+tibble::rownames_to_column(questionr::freq(dat2$RCI, digits = 4, cum = TRUE, sort = "dec", total = TRUE, na.last = TRUE)) 
+
+# Time 1 vs. Time 2
+relchange(df = data, t1 = 'adapt.1.scale', t2 = 'adapt.2.scale', sd = .74, rel = .72)
+relchange(df = data, t1 = 'acope.1.scale', t2 = 'acope.2.scale', sd = .71, rel = .75)
+relchange(df = data, t1 = 'pcope.1.scale', t2 = 'pcope.2.scale', sd = .92, rel = .70)
+relchange(df = data, t1 = 'chr.1.scale', t2 = 'chr.2.scale', sd = 1.37, rel = .95)
+relchange(df = data, t1 = 'catastro.1.scale', t2 = 'catastro.2.scale', sd = .73, rel = .83)
+relchange(df = data, t1 = 'depress.1.scale', t2 = 'depress.2.scale', sd = .72, rel = .91)
+relchange(df = data, t1 = 'optimism.1.scale', t2 = 'optimism.2.scale', sd = .79, rel = .71)
+relchange(df = data, t1 = 'posaffect.1.scale', t2 = 'posaffect.2.scale', sd = .77, rel = .92)
+relchange(df = data, t1 = 'negaffect.1.scale', t2 = 'negaffect.2.scale', sd = .68, rel = .88)
+relchange(df = data, t1 = 'lone.1.scale', t2 = 'lone.2.scale', sd = .85, rel = .80)
+relchange(df = data, t1 = 'orgtrust.1.scale', t2 = 'orgtrust.2.scale', sd = .75, rel = .81)
+relchange(df = data, t1 = 'wkengage.1.scale', t2 = 'wkengage.2.scale', sd = .88, rel = .80)
+relchange(df = data, t1 = 'lifemean.1.scale', t2 = 'lifemean.2.scale', sd = .86, rel = .80)
+
+# Time 1 vs. Time 5
+relchange(df = data, t1 = 'adapt.1.scale', t2 = 'adapt.5.scale', sd = .74, rel = .72)
+relchange(df = data, t1 = 'acope.1.scale', t2 = 'acope.5.scale', sd = .71, rel = .75)
+relchange(df = data, t1 = 'pcope.1.scale', t2 = 'pcope.5.scale', sd = .92, rel = .70)
+relchange(df = data, t1 = 'chr.1.scale', t2 = 'chr.5.scale', sd = 1.37, rel = .95)
+relchange(df = data, t1 = 'catastro.1.scale', t2 = 'catastro.5.scale', sd = .73, rel = .83)
+relchange(df = data, t1 = 'depress.1.scale', t2 = 'depress.5.scale', sd = .72, rel = .91)
+relchange(df = data, t1 = 'optimism.1.scale', t2 = 'optimism.5.scale', sd = .79, rel = .71)
+relchange(df = data, t1 = 'posaffect.1.scale', t2 = 'posaffect.5.scale', sd = .77, rel = .92)
+relchange(df = data, t1 = 'negaffect.1.scale', t2 = 'negaffect.5.scale', sd = .68, rel = .88)
+relchange(df = data, t1 = 'lone.1.scale', t2 = 'lone.5.scale', sd = .85, rel = .80)
+relchange(df = data, t1 = 'orgtrust.1.scale', t2 = 'orgtrust.5.scale', sd = .75, rel = .81)
+relchange(df = data, t1 = 'wkengage.1.scale', t2 = 'wkengage.5.scale', sd = .88, rel = .80)
+relchange(df = data, t1 = 'lifemean.1.scale', t2 = 'lifemean.5.scale', sd = .86, rel = .80)
+
+
+## Modified Brinley Plot (individual-level data)
+# Time 1 vs. Time 2
+# Adaptability
+dat1 <- data %>% dplyr::select(adapt.1.scale, adapt.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$adapt.1.scale, post.x = dat1$adapt.2.scale, coef.alpha = .72, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp1 <- ggplot2::ggplot(data = dat1, aes(x = adapt.1.scale, y = adapt.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = adapt.1.scale, y = adapt.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 8%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 85%", size = 7, color = "black", fontface = "bold") + 
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 7%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.01'~ '[.00, .03]'*', '~ italic(r) == '.42' ~('.58')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Adaptability") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Active Coping
+dat1 <- data %>% dplyr::select(acope.1.scale, acope.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$acope.1.scale, post.x = dat1$acope.2.scale, coef.alpha = .75, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp2 <- ggplot2::ggplot(data = dat1, aes(x = acope.1.scale, y = acope.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = acope.1.scale, y = acope.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 12%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 77%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 11%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.03'~ '[.02, .05]'*', '~ italic(r) == '.43' ~('.55')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Active Coping") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Passive Coping
+dat1 <- data %>% dplyr::select(pcope.1.scale, pcope.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$pcope.1.scale, post.x = dat1$pcope.2.scale, coef.alpha = .70, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp3 <- ggplot2::ggplot(data = dat1, aes(x = pcope.1.scale, y = pcope.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = pcope.1.scale, y = pcope.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 6%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 85%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 8%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.08'~ '[.06, .09]'*', '~ italic(r) == '.37' ~('.51')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Passive Coping") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Character
+dat1 <- data %>% dplyr::select(chr.1.scale, chr.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$chr.1.scale, post.x = dat1$chr.2.scale, coef.alpha = .95, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp4 <- ggplot2::ggplot(data = dat1, aes(x = chr.1.scale, y = chr.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(0, 10), breaks = scales::pretty_breaks(10)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(0, 10), breaks = scales::pretty_breaks(10)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = chr.1.scale, y = chr.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 7.5, y = 2.5, label = "RC- = 23%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 5.5, y = 5, label = "RC0 = 53%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 2.5, y = 7.5, label = "RC+ = 24%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 0, y = 10, label = "italic(d) == '.00'~ '[.00, .02]'*', '~ italic(r) == '.43' ~('.45')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Character") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Catastrophizing
+dat1 <- data %>% dplyr::select(catastro.1.scale, catastro.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$catastro.1.scale, post.x = dat1$catastro.2.scale, coef.alpha = .83, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp5 <- ggplot2::ggplot(data = dat1, aes(x = catastro.1.scale, y = catastro.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = catastro.1.scale, y = catastro.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 15%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 73%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 13%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.06'~ '[.05, .07]'*', '~ italic(r) == '.39' ~('.46')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Catastrophizing") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Depression
+dat1 <- data %>% dplyr::select(depress.1.scale, depress.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$depress.1.scale, post.x = dat1$depress.2.scale, coef.alpha = .91, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp6 <- ggplot2::ggplot(data = dat1, aes(x = depress.1.scale, y = depress.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = depress.1.scale, y = depress.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 16%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 65%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 19%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.05'~ '[.04, .06]'*', '~ italic(r) == '.36' ~('.46')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Depression") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Optimism
+dat1 <- data %>% dplyr::select(optimism.1.scale, optimism.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$optimism.1.scale, post.x = dat1$optimism.2.scale, coef.alpha = .71, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp7 <- ggplot2::ggplot(data = dat1, aes(x = optimism.1.scale, y = optimism.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = optimism.1.scale, y = optimism.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 8%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 84%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 7%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.05'~ '[.03, .06]'*', '~ italic(r) == '.47' ~('.64')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Optimism") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Positive Affect
+dat1 <- data %>% dplyr::select(posaffect.1.scale, posaffect.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$posaffect.1.scale, post.x = dat1$posaffect.2.scale, coef.alpha = .92, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp8 <- ggplot2::ggplot(data = dat1, aes(x = posaffect.1.scale, y = posaffect.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = posaffect.1.scale, y = posaffect.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 20%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 62%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 18%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.03'~ '[.01, .04]'*', '~ italic(r) == '.45' ~('.48')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Positive Affect") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Negative Affect
+dat1 <- data %>% dplyr::select(negaffect.1.scale, negaffect.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$negaffect.1.scale, post.x = dat1$negaffect.2.scale, coef.alpha = .88, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp9 <- ggplot2::ggplot(data = dat1, aes(x = negaffect.1.scale, y = negaffect.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = negaffect.1.scale, y = negaffect.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 16%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 68%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 15%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.02'~ '[.01, .03]'*', '~ italic(r) == '.40' ~('.45')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Negative Affect") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Loneliness
+dat1 <- data %>% dplyr::select(lone.1.scale, lone.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$lone.1.scale, post.x = dat1$lone.2.scale, coef.alpha = .80, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp10 <- ggplot2::ggplot(data = dat1, aes(x = lone.1.scale, y = lone.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = lone.1.scale, y = lone.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 9%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 82%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 9%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.00'~ '[.00, .02]'*', '~ italic(r) == '.47' ~('.58')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Loneliness") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Organizational Trust
+dat1 <- data %>% dplyr::select(orgtrust.1.scale, orgtrust.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$orgtrust.1.scale, post.x = dat1$orgtrust.2.scale, coef.alpha = .81, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp11 <- ggplot2::ggplot(data = dat1, aes(x = orgtrust.1.scale, y = orgtrust.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = orgtrust.1.scale, y = orgtrust.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 20%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 68%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 12%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.17'~ '[.16, .19]'*', '~ italic(r) == '.31' ~('.37')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Organizational Trust") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Work Engagement
+dat1 <- data %>% dplyr::select(wkengage.1.scale, wkengage.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$wkengage.1.scale, post.x = dat1$wkengage.2.scale, coef.alpha = .80, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp12 <- ggplot2::ggplot(data = dat1, aes(x = wkengage.1.scale, y = wkengage.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = wkengage.1.scale, y = wkengage.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 19%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 74%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 7%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.26'~ '[.25, .27]'*', '~ italic(r) == '.39' ~('.48')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Work Engagement") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Life Meaning
+dat1 <- data %>% dplyr::select(lifemean.1.scale, lifemean.2.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$lifemean.1.scale, post.x = dat1$lifemean.2.scale, coef.alpha = .80, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp13 <- ggplot2::ggplot(data = dat1, aes(x = lifemean.1.scale, y = lifemean.2.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dplyr::sample_n(dat1, size = 5000, replace = FALSE), aes(x = lifemean.1.scale, y = lifemean.2.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 9%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 81%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 10%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.05'~ '[.04, .06]'*', '~ italic(r) == '.50' ~('.61')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Life Meaning") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 2") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Combine 13 plots for Time 1 vs. Time 2
+png(width = 5000, height = 8500, res = 300)
+ggpubr::ggarrange(bp1, bp2, bp3, bp4, bp5, bp6, bp7, bp8, bp9, bp10, bp11, bp12, bp13, ncol = 3, nrow = 5, align = "h")
+dev.off()
+
+
+# Time 1 vs. Time 5
+# Adaptability
+dat1 <- data %>% dplyr::select(adapt.1.scale, adapt.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$adapt.1.scale, post.x = dat1$adapt.5.scale, coef.alpha = .72, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp1 <- ggplot2::ggplot(data = dat1, aes(x = adapt.1.scale, y = adapt.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = adapt.1.scale, y = adapt.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 9%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 84%", size = 7, color = "black", fontface = "bold") + 
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 7%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.01'~ '[.05, .06]'*', '~ italic(r) == '.35' ~('.48')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Adaptability") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Active Coping
+dat1 <- data %>% dplyr::select(acope.1.scale, acope.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$acope.1.scale, post.x = dat1$acope.5.scale, coef.alpha = .75, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp2 <- ggplot2::ggplot(data = dat1, aes(x = acope.1.scale, y = acope.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = acope.1.scale, y = acope.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 13%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 76%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 11%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.02'~ '[.03, .08]'*', '~ italic(r) == '.36' ~('.45')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Active Coping") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Passive Coping
+dat1 <- data %>% dplyr::select(pcope.1.scale, pcope.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$pcope.1.scale, post.x = dat1$pcope.5.scale, coef.alpha = .70, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp3 <- ggplot2::ggplot(data = dat1, aes(x = pcope.1.scale, y = pcope.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = pcope.1.scale, y = pcope.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 6%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 83%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 11%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.16'~ '[.11, .22]'*', '~ italic(r) == '.32' ~('.44')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Passive Coping") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Character
+dat1 <- data %>% dplyr::select(chr.1.scale, chr.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$chr.1.scale, post.x = dat1$chr.5.scale, coef.alpha = .95, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp4 <- ggplot2::ggplot(data = dat1, aes(x = chr.1.scale, y = chr.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(0, 10), breaks = scales::pretty_breaks(10)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(0, 10), breaks = scales::pretty_breaks(10)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = chr.1.scale, y = chr.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 7.5, y = 2.5, label = "RC- = 24%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 5.5, y = 5, label = "RC0 = 48%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 2.5, y = 7.5, label = "RC+ = 28%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 0, y = 10, label = "italic(d) == '.01'~ '[-.05, .07]'*', '~ italic(r) == '.34' ~('.35')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Character") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Catastrophizing
+dat1 <- data %>% dplyr::select(catastro.1.scale, catastro.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$catastro.1.scale, post.x = dat1$catastro.5.scale, coef.alpha = .83, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp5 <- ggplot2::ggplot(data = dat1, aes(x = catastro.1.scale, y = catastro.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = catastro.1.scale, y = catastro.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 19%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 68%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 12%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.14'~ '[.09, .20]'*', '~ italic(r) == '.33' ~('.38')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Catastrophizing") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Depression
+dat1 <- data %>% dplyr::select(depress.1.scale, depress.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$depress.1.scale, post.x = dat1$depress.5.scale, coef.alpha = .91, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp6 <- ggplot2::ggplot(data = dat1, aes(x = depress.1.scale, y = depress.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = depress.1.scale, y = depress.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 18%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 62%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 20%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.04'~ '[-.01, .10]'*', '~ italic(r) == '.27' ~('.29')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Depression") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Optimism
+dat1 <- data %>% dplyr::select(optimism.1.scale, optimism.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$optimism.1.scale, post.x = dat1$optimism.5.scale, coef.alpha = .71, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp7 <- ggplot2::ggplot(data = dat1, aes(x = optimism.1.scale, y = optimism.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = optimism.1.scale, y = optimism.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 10%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 81%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 9%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.02'~ '[-.08, .03]'*', '~ italic(r) == '.41' ~('.55')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Optimism") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Positive Affect
+dat1 <- data %>% dplyr::select(posaffect.1.scale, posaffect.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$posaffect.1.scale, post.x = dat1$posaffect.5.scale, coef.alpha = .92, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp8 <- ggplot2::ggplot(data = dat1, aes(x = posaffect.1.scale, y = posaffect.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = posaffect.1.scale, y = posaffect.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 20%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 57%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 22%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.03'~ '[-.02, .09]'*', '~ italic(r) == '.38' ~('.40')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Positive Affect") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Negative Affect
+dat1 <- data %>% dplyr::select(negaffect.1.scale, negaffect.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$negaffect.1.scale, post.x = dat1$negaffect.5.scale, coef.alpha = .88, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp9 <- ggplot2::ggplot(data = dat1, aes(x = negaffect.1.scale, y = negaffect.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = negaffect.1.scale, y = negaffect.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 19%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 65%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 15%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.07'~ '[.01, .12]'*', '~ italic(r) == '.32' ~('.36')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Negative Affect") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Loneliness
+dat1 <- data %>% dplyr::select(lone.1.scale, lone.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$lone.1.scale, post.x = dat1$lone.5.scale, coef.alpha = .80, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp10 <- ggplot2::ggplot(data = dat1, aes(x = lone.1.scale, y = lone.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = lone.1.scale, y = lone.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 10%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 80%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 10%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.05'~ '[-.01, .11]'*', '~ italic(r) == '.42' ~('.51')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Loneliness") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Organizational Trust
+dat1 <- data %>% dplyr::select(orgtrust.1.scale, orgtrust.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$orgtrust.1.scale, post.x = dat1$orgtrust.5.scale, coef.alpha = .81, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp11 <- ggplot2::ggplot(data = dat1, aes(x = orgtrust.1.scale, y = orgtrust.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = orgtrust.1.scale, y = orgtrust.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 25%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 62%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 12%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.24'~ '[.18, .30]'*', '~ italic(r) == '.20' ~('.24')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Organizational Trust") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Work Engagement
+dat1 <- data %>% dplyr::select(wkengage.1.scale, wkengage.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$wkengage.1.scale, post.x = dat1$wkengage.5.scale, coef.alpha = .80, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp12 <- ggplot2::ggplot(data = dat1, aes(x = wkengage.1.scale, y = wkengage.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = wkengage.1.scale, y = wkengage.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 21%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 72%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 7%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.31'~ '[.25, .36]'*', '~ italic(r) == '.29' ~('.35')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Work Engagement") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+# Life Meaning
+dat1 <- data %>% dplyr::select(lifemean.1.scale, lifemean.5.scale) %>% tidyr::drop_na()
+rci1 <- clinsig::clinsig(pre.x = dat1$lifemean.1.scale, post.x = dat1$lifemean.5.scale, coef.alpha = .80, which.crit = "b")
+rci1.coef <- rci1$relchng
+bp13 <- ggplot2::ggplot(data = dat1, aes(x = lifemean.1.scale, y = lifemean.5.scale)) +
+  scale_x_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  scale_y_continuous(expand = c(.03, 0), limits = c(1, 5), breaks = scales::pretty_breaks(5)) +
+  geom_abline(slope = 1, intercept = 0, size = 1, color = "black") + 
+  geom_abline(slope = 1, intercept = rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_abline(slope = 1, intercept = -rci1.coef, size = 1, color = "black", linetype = "dashed") + 
+  geom_point(data = dat1, aes(x = lifemean.1.scale, y = lifemean.5.scale), size = 1, position = position_jitter(width = 0.5, height = 0.5), alpha = .4, color = "#E57200") +
+  annotate("text", x = 4.25, y = 2, label = "RC- = 7%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 3, y = 3, label = "RC0 = 75%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.75, y = 4.5, label = "RC+ = 18%", size = 7, color = "black", fontface = "bold") +
+  annotate("text", x = 1.00, y = 5, label = "italic(d) == '.31'~ '[.25, .37]'*', '~ italic(r) == '.36' ~('.43')", size = 7, hjust = 0, parse = TRUE) + 
+  ggtitle("Life Meaning") +
+  xlab("Time Occasion 1") +
+  ylab("Time Occasion 5") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 1, hjust = 0.5, size = 20)) +
+  theme(axis.title.x = element_text(size = 26)) +
+  theme(axis.title.y = element_text(size = 26)) +
+  theme(plot.title = element_text(hjust = 0.5, color = "black", size = 28, face = "bold")) +
+  theme(plot.subtitle = element_text(hjust = 0.5, color = "black", size = 14, face = "italic"))
+
+
+# Combine 13 plots for Time 1 vs. Time 2
+png(width = 5000, height = 8500, res = 300)
+ggpubr::ggarrange(bp1, bp2, bp3, bp4, bp5, bp6, bp7, bp8, bp9, bp10, bp11, bp12, bp13, ncol = 3, nrow = 5, align = "h")
+dev.off()
+
+
+
+
+
+#END
 ### Figure Visualizations  ------------------------------------------------------------------------------------------------
 
 ## Figure 1: Mean Plot by Time Occasion for both studies
